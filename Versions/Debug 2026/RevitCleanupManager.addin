@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<RevitAddIns>
+  <AddIn Type="Application">
+    <Name>Revit Cleanup Manager</Name>
+    <Assembly>RevitCleanupManager.dll</Assembly>
+    <AddInId>4C1B7E2A-9F3D-4E5A-8B2C-1A2B3C4D5E6F</AddInId>
+    <FullClassName>RevitCleanupManager.App</FullClassName>
+    <VendorId>ENGR M SHAHARYAR</VendorId>
+    <VendorDescription>muhammadshaharyar813@gmail.com</VendorDescription>
+  </AddIn>
+</RevitAddIns>
