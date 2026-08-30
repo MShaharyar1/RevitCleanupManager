@@ -1,0 +1,17 @@
+{
+  "NamingRules": [
+    { "TargetElementType": "Level", "RegexPattern": "^(L\\d{1,2}|Level \\d{1,2}|Roof|B\\d)\\s*-?\\s*.*$", "Description": "Levels should start with a floor code (e.g. 'L01 - Ground Floor')." },
+    { "TargetElementType": "Sheet", "RegexPattern": "^[A-Z]{1,3}-?\\d{2,4}$", "Description": "Sheet numbers should follow DISCIPLINE-### (e.g. 'A-101')." },
+    { "TargetElementType": "View", "RegexPattern": "^(?!.*(Copy of|\\{3D\\}|Unnamed)).+$", "Description": "View names should not contain placeholder text like 'Copy of' or '{3D}'." },
+    { "TargetElementType": "Grid", "RegexPattern": "^[A-Z0-9.]{1,4}$", "Description": "Grid names should be short alphanumeric labels (e.g. 'A', '1', 'A.1')." }
+  ],
+  "RequiredParameters": [
+    { "CategoryName": "Doors", "ParameterName": "Mark" },
+    { "CategoryName": "Windows", "ParameterName": "Mark" },
+    { "CategoryName": "Rooms", "ParameterName": "Name" },
+    { "CategoryName": "Rooms", "ParameterName": "Number" },
+    { "CategoryName": "Sheets", "ParameterName": "Sheet Name" }
+  ],
+  "DefaultNamePatterns": [ "^Family\\d*$", "^Type\\s?\\d*$", "^Unnamed$", "Copy of", "^Symbol\\s?\\d*$" ],
+  "DuplicateMarkCategories": [ "Doors", "Windows" ]
+}

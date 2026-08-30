@@ -1,0 +1,162 @@
+<Window x:Class="RevitCleanupManager.UI.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:conv="clr-namespace:RevitCleanupManager.UI.Converters"
+        Title="Revit Cleanup Manager" Height="820" Width="1240"
+        WindowStartupLocation="CenterScreen">
+
+    <Window.Resources>
+        <conv:HealthRatingToBrushConverter x:Key="HealthRatingToBrush"/>
+        <conv:ScoreToBrushConverter x:Key="ScoreToBrush"/>
+    </Window.Resources>
+
+    <TabControl Margin="8">
+
+        <!-- ============================= CLEANUP TAB ============================= -->
+        <TabItem Header="Cleanup" DataContext="{Binding Cleanup}">
+            <DockPanel Margin="8">
+                <DockPanel DockPanel.Dock="Top" Margin="0,0,0,10">
+                    <TextBlock Text="Revit Cleanup Manager" FontSize="18" FontWeight="Bold" VerticalAlignment="Center"/>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" DockPanel.Dock="Right">
+                        <Button Content="Rescan Model" Command="{Binding ScanCommand}" Padding="10,4" Margin="4,0"/>
+                        <Button Content="Select All Safe" Command="{Binding SelectAllSafeCommand}" Padding="10,4" Margin="4,0"/>
+                        <Button Content="Select All" Command="{Binding SelectAllCommand}" Padding="10,4" Margin="4,0"/>
+                        <Button Content="Select None" Command="{Binding SelectNoneCommand}" Padding="10,4" Margin="4,0"/>
+                        <Button Content="{Binding TotalSelected, StringFormat='Clean Up Selected ({0})'}"
+                                Command="{Binding RunCleanupCommand}" Background="#C4392B" Foreground="White" FontWeight="Bold"
+                                Padding="14,4" Margin="12,0,0,0"/>
+                    </StackPanel>
+                </DockPanel>
+
+                <Border DockPanel.Dock="Bottom" BorderBrush="#DDD" BorderThickness="0,1,0,0" Padding="0,6,0,0" Margin="0,10,0,0">
+                    <TextBlock Text="{Binding StatusText}" Foreground="#555"/>
+                </Border>
+
+                <Border DockPanel.Dock="Left" Width="250" BorderBrush="#DDD" BorderThickness="1" Padding="10" Margin="0,0,10,0">
+                    <StackPanel>
+                        <TextBlock Text="Model Health" FontWeight="Bold" FontSize="15" Margin="0,0,0,8"/>
+                        <Border Background="{Binding OverallScore, Converter={StaticResource ScoreToBrush}}" CornerRadius="4" Padding="10" Margin="0,0,0,10">
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                <TextBlock Text="{Binding OverallGrade}" FontSize="32" FontWeight="Bold" Foreground="White"/>
+                                <TextBlock Text="{Binding OverallScore, StringFormat=' ({0}/100)'}" FontSize="13" Foreground="White" VerticalAlignment="Bottom" Margin="4,0,0,6"/>
+                            </StackPanel>
+                        </Border>
+                        <ItemsControl ItemsSource="{Binding HealthMetrics}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border BorderBrush="#EEE" BorderThickness="0,0,0,1" Padding="0,6">
+                                        <StackPanel>
+                                            <StackPanel Orientation="Horizontal">
+                                                <Ellipse Width="10" Height="10" Fill="{Binding Rating, Converter={StaticResource HealthRatingToBrush}}" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                                                <TextBlock Text="{Binding Name}" FontWeight="SemiBold"/>
+                                                <TextBlock Text="{Binding RawValue, StringFormat=' - {0}'}" Foreground="#555"/>
+                                            </StackPanel>
+                                            <TextBlock Text="{Binding Recommendation}" TextWrapping="Wrap" FontSize="11" Foreground="#777" Margin="16,2,0,0"/>
+                                        </StackPanel>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+                </Border>
+
+                <TabControl ItemsSource="{Binding Tabs}">
+                    <TabControl.ItemTemplate>
+                        <DataTemplate><TextBlock Text="{Binding TabHeader}"/></DataTemplate>
+                    </TabControl.ItemTemplate>
+                    <TabControl.ContentTemplate>
+                        <DataTemplate>
+                            <DataGrid ItemsSource="{Binding Items}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False"
+                                      GridLinesVisibility="Horizontal" RowHeaderWidth="0" Margin="0,8,0,0">
+                                <DataGrid.Columns>
+                                    <DataGridCheckBoxColumn Header="✓" Binding="{Binding IsSelected, UpdateSourceTrigger=PropertyChanged}" Width="34"/>
+                                    <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="2*" IsReadOnly="True"/>
+                                    <DataGridTextColumn Header="Type" Binding="{Binding TypeOrFamilyName}" Width="1.4*" IsReadOnly="True"/>
+                                    <DataGridTextColumn Header="Details" Binding="{Binding Details}" Width="3*" IsReadOnly="True"/>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </DataTemplate>
+                    </TabControl.ContentTemplate>
+                </TabControl>
+            </DockPanel>
+        </TabItem>
+
+        <!-- ============================= QA/QC TAB ============================= -->
+        <TabItem Header="Quality Control (QA/QC)" DataContext="{Binding QaQc}">
+            <DockPanel Margin="8">
+
+                <DockPanel DockPanel.Dock="Top" Margin="0,0,0,10">
+                    <TextBlock Text="Model QA/QC" FontSize="18" FontWeight="Bold" VerticalAlignment="Center"/>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" DockPanel.Dock="Right">
+                        <Button Content="Run QA/QC Scan" Command="{Binding ScanCommand}" Padding="10,4" Margin="4,0"/>
+                        <Button Content="Select All" Command="{Binding SelectAllCommand}" Padding="10,4" Margin="4,0"/>
+                        <Button Content="Select None" Command="{Binding SelectNoneCommand}" Padding="10,4" Margin="4,0"/>
+                        <Button Content="{Binding SelectedCount, StringFormat='Apply Selected Fixes ({0})'}"
+                                Command="{Binding ApplySelectedFixesCommand}" Background="#2E7D32" Foreground="White" FontWeight="Bold"
+                                Padding="14,4" Margin="12,0,0,0"/>
+                    </StackPanel>
+                </DockPanel>
+
+                <Border DockPanel.Dock="Bottom" BorderBrush="#DDD" BorderThickness="0,1,0,0" Padding="0,6,0,0" Margin="0,10,0,0">
+                    <TextBlock Text="{Binding StatusText}" Foreground="#555"/>
+                </Border>
+
+                <TabControl DockPanel.Dock="Top">
+
+                    <!-- ---- Sub-tab: flagged issues, filterable, inline-editable fixes ---- -->
+                    <TabItem Header="Flagged Issues">
+                        <DockPanel Margin="0,8,0,0">
+                            <DockPanel DockPanel.Dock="Top" Margin="0,0,0,8">
+                                <TextBlock Text="Filter by category:" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                                <ComboBox ItemsSource="{Binding CategoryFilterOptions}" SelectedItem="{Binding SelectedCategoryFilter}" Width="220" HorizontalAlignment="Left"/>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" DockPanel.Dock="Right">
+                                    <Button Content="Export to Excel" Command="{Binding ExportIssuesCommand}" Padding="10,4" Margin="4,0"/>
+                                    <Button Content="Import Fixes from Excel" Command="{Binding ImportIssuesCommand}" Padding="10,4" Margin="4,0"/>
+                                </StackPanel>
+                            </DockPanel>
+
+                            <DataGrid ItemsSource="{Binding FilteredIssues}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False"
+                                      GridLinesVisibility="Horizontal" RowHeaderWidth="0">
+                                <DataGrid.Columns>
+                                    <DataGridCheckBoxColumn Header="✓" Binding="{Binding IsSelected, UpdateSourceTrigger=PropertyChanged}" Width="34"/>
+                                    <DataGridTextColumn Header="Category" Binding="{Binding RevitCategory}" Width="1.2*" IsReadOnly="True"/>
+                                    <DataGridTextColumn Header="Element" Binding="{Binding ElementName}" Width="1.6*" IsReadOnly="True"/>
+                                    <DataGridTextColumn Header="Issue" Binding="{Binding IssueType}" Width="1.2*" IsReadOnly="True"/>
+                                    <DataGridTextColumn Header="Parameter" Binding="{Binding ParameterName}" Width="1*" IsReadOnly="True"/>
+                                    <DataGridTextColumn Header="Current Value" Binding="{Binding CurrentValue}" Width="1.4*" IsReadOnly="True"/>
+                                    <DataGridTextColumn Header="Severity" Binding="{Binding Severity}" Width="0.8*" IsReadOnly="True"/>
+                                    <DataGridTextColumn Header="New Value (editable)" Binding="{Binding ProposedValue, UpdateSourceTrigger=PropertyChanged}" Width="1.6*"/>
+                                    <DataGridTextColumn Header="Rule" Binding="{Binding RuleDescription}" Width="2.4*" IsReadOnly="True"/>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </DockPanel>
+                    </TabItem>
+
+                    <!-- ---- Sub-tab: general bulk parameter export/import (Param/Family/Sheet Manager style) ---- -->
+                    <TabItem Header="Bulk Parameter Editor">
+                        <StackPanel Margin="0,8,0,0">
+                            <TextBlock TextWrapping="Wrap" Foreground="#555" Margin="0,0,0,10"
+                                       Text="Export any parameter, for any set of categories, to an Excel grid you can bulk-edit -- then re-import to write the changes back. Works like a Param/Family/Sheet manager: enter category names (as they appear in Revit) and parameter names, comma-separated."/>
+
+                            <TextBlock Text="Categories (comma-separated, e.g. Doors, Windows, Rooms, Sheets):" Margin="0,0,0,4"/>
+                            <TextBox Text="{Binding BulkCategories, UpdateSourceTrigger=PropertyChanged}" Padding="6" Margin="0,0,0,10"/>
+
+                            <TextBlock Text="Parameters (comma-separated, e.g. Mark, Comments, Sheet Name):" Margin="0,0,0,4"/>
+                            <TextBox Text="{Binding BulkParameters, UpdateSourceTrigger=PropertyChanged}" Padding="6" Margin="0,0,0,10"/>
+
+                            <StackPanel Orientation="Horizontal">
+                                <Button Content="Export to Excel" Command="{Binding ExportBulkParametersCommand}" Padding="12,6" Margin="0,0,8,0"/>
+                                <Button Content="Import from Excel" Command="{Binding ImportBulkParametersCommand}" Padding="12,6"/>
+                            </StackPanel>
+
+                            <TextBlock Margin="0,16,0,0" Foreground="#777" TextWrapping="Wrap"
+                                       Text="Tip: to clear a value on re-import, type the literal text &lt;blank&gt; in that cell. Empty cells are left untouched."/>
+                        </StackPanel>
+                    </TabItem>
+
+                </TabControl>
+            </DockPanel>
+        </TabItem>
+
+    </TabControl>
+</Window>

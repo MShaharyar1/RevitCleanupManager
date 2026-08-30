@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <UseWPF>false</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Open-source, no-Excel-install-required xlsx read/write (MIT licensed). -->
+    <PackageReference Include="ClosedXML" Version="0.104.1" />
+    <PackageReference Include="System.Text.Json" Version="8.0.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!--
+      RevitAPI.dll / RevitAPIUI.dll aren't published on NuGet by Autodesk for direct
+      reference in most setups. Point these at your local install (adjust RevitInstallDir
+      in Directory.Build.props if yours differs), or swap for the community
+      "Nice3point.Revit.Api.RevitAPI[UI]" NuGet packages -- see README.md.
+    -->
+    <Reference Include="RevitAPI">
+      <HintPath>$(RevitInstallDir)\RevitAPI.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="RevitAPIUI">
+      <HintPath>$(RevitInstallDir)\RevitAPIUI.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+  </ItemGroup>
+
+</Project>

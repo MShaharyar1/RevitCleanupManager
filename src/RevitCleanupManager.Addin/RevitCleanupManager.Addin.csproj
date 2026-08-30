@@ -1,0 +1,48 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <UseWPF>true</UseWPF>
+    <AssemblyName>RevitCleanupManager</AssemblyName>
+    <RootNamespace>RevitCleanupManager.Addin</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\RevitCleanupManager.Core\RevitCleanupManager.Core.csproj"/>
+    <ProjectReference Include="..\RevitCleanupManager.UI\RevitCleanupManager.UI.csproj"/>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="RevitAPI">
+      <HintPath>$(RevitInstallDir)\RevitAPI.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="RevitAPIUI">
+      <HintPath>$(RevitInstallDir)\RevitAPIUI.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Resources\icon32.png" CopyToOutputDirectory="PreserveNewest" Condition="Exists('Resources\icon32.png')"/>
+    <!-- Editable QA/QC rule config -- tweak naming patterns / required parameters per project without recompiling. -->
+    <None Include="Resources\QaConfig.json" CopyToOutputDirectory="PreserveNewest"/>
+  </ItemGroup>
+
+  <!-- After build, deploy the manifest + dll (+ QaConfig.json) into the per-year Revit
+       Addins folder so F5 picks it up immediately. -->
+  <Target Name="DeployAddin" AfterTargets="Build">
+    <PropertyGroup>
+      <AddinsDir>$(APPDATA)\Autodesk\Revit\Addins\$(RevitVersion)</AddinsDir>
+    </PropertyGroup>
+    <MakeDir Directories="$(AddinsDir)" Condition="!Exists('$(AddinsDir)')"/>
+    <Copy SourceFiles="$(MSBuildProjectDirectory)\RevitCleanupManager.addin"
+          DestinationFiles="$(AddinsDir)\RevitCleanupManager.addin"
+          Condition="Exists('$(MSBuildProjectDirectory)\RevitCleanupManager.addin')"/>
+    <ItemGroup>
+      <BuildOutput Include="$(OutDir)**\*.*"/>
+    </ItemGroup>
+    <Copy SourceFiles="@(BuildOutput)" DestinationFolder="$(AddinsDir)\RevitCleanupManager\%(RecursiveDir)"/>
+  </Target>
+
+</Project>

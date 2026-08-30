@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<RevitAddIns>
+  <AddIn Type="Application">
+    <Name>Revit Cleanup Manager</Name>
+    <Assembly>./RevitCleanupManager/RevitCleanupManager.dll</Assembly>
+    <AddInId>4C6E7B1E-9C3A-4C2E-8C7A-2B6E9F1D0A11</AddInId>
+    <FullClassName>RevitCleanupManager.Addin.App</FullClassName>
+    <VendorId>RCM</VendorId>
+    <VendorDescription>Revit Cleanup Manager</VendorDescription>
+  </AddIn>
+</RevitAddIns>
